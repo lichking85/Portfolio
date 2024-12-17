@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali Khalaj Portfolio</title>
+    <style>
+        /* General Body Style */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header and Profile Image */
+        h1 {
+            color: #0078ff;
+            font-size: 2.5em;
+            margin-top: 20px;
+        }
+
+        .profile-container {
+            margin-top: 20px;
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #0078ff;
+        }
+
+        .about-text {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        /* Tab Buttons */
+        .tabs {
+            margin-top: 20px;
+        }
+
+        .tab-button {
+            background-color: #0078ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .tab-button:hover {
+            background-color: #005bb5;
+        }
+
+        /* Popup Windows */
+        .popup {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: auto;
+            background-color: #fff;
+            border: 2px solid #0078ff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            padding: 20px;
+            text-align: left; 
+            overflow-y: auto;
+        }
+
+        .popup h2 {
+            margin-top: 0;
+        }
+
+        .close-button {
+            position: absolute; /* Position it relative to the popup */
+            top: 10px; /* Distance from the top */
+            right: 10px; /* Distance from the right */
+            width: 20px; /* Square width */
+            height: 20px; /* Square height */
+            background-color: #ff4d4d; /* Red background */
+            color: white; /* White text (cross) */
+            border: none; /* Remove borders */
+            font-size: 16px; /* Font size for the "×" */
+            font-weight: bold; /* Make the cross bold */
+            display: flex; /* Flexbox to center content */
+            align-items: center; /* Vertical centering */
+            justify-content: center; /* Horizontal centering */
+            border-radius: 3px; /* Slightly rounded corners */
+            cursor: pointer; /* Pointer on hover */
+            transition: background-color 0.3s;
+        }
+
+        .close-button:hover {
+            background-color: #cc0000; /* Darker red on hover */
+        }
+
+        /* Overlay to Dim Background */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 500;
+        }
+
+        .tabs-container {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px;
+            align-items: flex-start;
+        }
+
+        .tab-button {
+            background-color: #0078ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px 0;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .tab-button:hover {
+            background-color: #005bb5;
+        }
+
+        
+
+        /* Style for the game content (initially hidden) */
+        .game-content {
+            display: none; /* Hide by default */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the popup */
+            width: 80%; /* Set the width to 80% of the screen */
+            max-width: 800px; /* Max width for large screens */
+            height: auto; /* Allow height to adjust based on content */
+            max-height: 90vh; /* Make sure the height doesn't exceed 90% of the viewport height */
+            background-color: #fff;
+            border: 2px solid #0078ff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            padding: 20px;
+            text-align: left;
+            overflow-y: auto; /* Allow vertical scrolling when content overflows */
+        }
+        /* Mafia Game Popup (Hidden by default) */
+        .game-popup {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 800px;
+            height: auto;
+            max-height: 90vh;
+            background-color: #fff;
+            border: 2px solid #0078ff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            padding: 20px;
+            text-align: left;
+            overflow-y: auto;
+        }
+
+        /* For when the game panel is active */
+        .game-content.active {
+            display: block; /* Display the content */
+        }
+
+        /* Close Button for Game Popup */
+        .close-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.2em;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .close-button:hover {
+            background-color: #cc0000;
+        }
+
+        /* Responsive Design for Smaller Screens */
+        @media (max-width: 600px) {
+            .game-content {
+                width: 90%; /* Use more space on smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <h1>ALI KHALAJ PORTFOLIO</h1>
+
+    <!-- Profile Section -->
+    <div class="profile-container">
+        <img src="profile.jpg" alt="Ali Khalaj" class="profile-image">
+        <p class="about-text">Hi, I'm Ali Khalaj, a passionate game developer exploring new worlds in Unity!</p>
+    </div>
+
+    <!-- Tab Buttons -->
+    <div class="tabs">
+        <button class="tab-button" onclick="openPopup('aboutPopup')">About Me</button>
+        <button class="tab-button" onclick="openPopup('gamesPopup')">My Games</button>
+        <button class="tab-button" onclick="openPopup('contactPopup')">Contact</button>
+    </div>
+
+    <!-- Popup Overlays -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Popups -->
+    <div class="popup" id="aboutPopup">
+        <h2>About Me</h2>
+        <p>I have three years of experience in the game development industry, starting with a focus on hyper casual
+            games where I mastered basic mechanics and became proficient in C# and Unity. As my passion for game
+            development grew, I sought opportunities at different companies, initially joining as a junior developer to
+            learn from seasoned professionals. Over time, I transitioned from offline to online games to expand my skill
+            set in that domain. This experience deepened my understanding of online game development and equipped
+            me to tackle more complex projects and assume critical roles within companies</p>
+        <button class="close-button" onclick="closePopup()">×</button>
+    </div>
+
+    <div class="popup" id="gamesPopup">
+        <h2>My Games</h2>
+        <div class="tabs-container">
+            <button class="tab-button" onclick="openMafiaPopup()">Mafia</button>
+            <button class="tab-button" onclick="openServer()">Server</button>
+            <button class="tab-button" onclick="openOceanPopup()">Ocean Evolution</button>
+            <button class="tab-button" onclick="openMazeJumper()">Maze Jumper</button>
+            <button class="tab-button" onclick="openIdleVoxel()">Idle Voxel World</button>
+            <button class="tab-button" onclick="openHawaii()">Hawaii Dream Idle Arcade</button>
+            <!-- Add more games here later -->
+        </div>
+        <button class="close-button" onclick="closePopup()">×</button>
+    </div>
+
+    <div id="mafiaPopup" class="game-popup">
+        <div class="popup-content">
+            <h3>Mafia</h3>
+            <img src="mafia1.jpg" alt="Mafia Game GIF" width="150px" height="300px">
+            <img src="mafia2.jpg" alt="Mafia Game GIF" width="150px" height="300px">
+            <img src="mafia3.jpg" alt="Mafia Game GIF" width="150px" height="300px">
+            <img src="mafia4.jpg" alt="Mafia Game GIF" width="150px" height="300px">
+            <h4>About This Game</h4>
+            <p>It's a multiplayer game where players try to figure out who the mafia members are.
+                I worked as the sole front-end developer on this project .This game has
+                achieved over 200k downloads on Cafe Bazaar and over 600k downloads on Myket.
+            </p>
+            <button class="close-button" onclick="closeMafiaPopup()">×</button>
+        </div>
+    </div>
+
+    <div id="serverPopup" class="game-popup">
+        <div class="popup-content">
+            <h3>Server</h3>
+            <img src="server.jpg" alt="Mafia Game GIF" width="600px" height="300px">
+            <h4>About My Server</h4>
+            <p>I developed a server in C# using TcpClient and UdpClient. In this server, you can initiate any session and send data using either the TCP or UDP protocol within the same session. For critical packets, such as updating user databases, or handling important events like members entering or exiting, as well as deterministic packets, I use the TCP protocol. For packets that require minimal latency, such as streaming user voice or video, or transmitting movement data, I use the UDP protocol.
+            </p>
+            <button class="close-button" onclick="closeServer()">×</button>
+        </div>
+    </div>
+
+    <div id="oceanPopup" class="game-popup">
+        <div class="popup-content">
+            <h3>Ocean Evolution</h3>
+            <img src="ocean1.jpg" alt="Mafia Game GIF" width="150px" height="300px">
+            <img src="ocean2.jpg" alt="Mafia Game GIF" width="150px" height="300px">
+            <h4>About This Game</h4>
+            <p>It's a survival game where you control a creature in the ocean, 
+                striving to survive against various enemies. 
+                As you gain experience, you can attach different limbs to your character—such as horns—to become stronger. In this game,
+                 I used vertex animation to bring the ocean creatures to life, adding a sense of realism and dynamic movement to the gameplay.
+            </p>
+            <button class="close-button" onclick="closeOceanPopup()">×</button>
+        </div>
+    </div>
+    
+    
+    <div id="hawaiiPopup" class="game-popup">
+        <div class="popup-content">
+            <h3>Hawaii Dream Idle Arcade</h3>
+            <img src="Hawaii1.jpg" alt="Mafia Game GIF" width="150px" height="300px">
+            <img src="Hawaii2.jpg" alt="Mafia Game GIF" width="150px" height="300px">
+            <h4>About This Game</h4>
+            <p>In this game, you run a shop selling drinks to customers. You can gather resources like woods to expand your shop and grow your business.
+            </p>
+            <button class="close-button" onclick="closeHawaii()">×</button>
+        </div>
+    </div>
+    <div id="mazeJumperPopup" class="game-popup">
+        <div class="popup-content">
+            <h3>Maze Jumper</h3>
+            <img src="mazeJumper.jpg" alt="Mafia Game GIF" width="150px" height="300px">
+            <h4>About This Game</h4>
+            <p>In this game, you control a character by rotating him to left and right.
+                 Whenever its feet touch any part of the platforms, he jumps in that direction.
+                 Your goal is to guide the character through the maze and help him exit each level.
+            </p>
+            <button class="close-button" onclick="closeMazeJumper()">×</button>
+        </div>
+    </div>
+    <div id="openIdleVoxelPopup" class="game-popup">
+        <div class="popup-content">
+            <h3>Idle Voxel World</h3>
+            <img src="idleVoxel.jpg" alt="Mafia Game GIF" width="150px" height="300px">
+            <h4>About This Game</h4>
+            <p>This game is an idle clicker where you can increase the number of workers, boost their speed, or increase your income. Each worker brings a brick to your building, and when all the bricks are delivered, your building is completed, allowing you to advance to the next level.
+            </p>
+            <button class="close-button" onclick="closeIdleVoxel()">×</button>
+        </div>
+    </div>
+    <div class="popup" id="contactPopup">
+        <h2>Contact</h2>
+        <p>Phone: +989056839813</p>
+        <p>Telegram: <a href="https://t.me/Ali_khalaj_1" target="_blank">t.me/Ali_khalaj_1</a></p>
+        <p>Email: <a href="mailto:alikhalajj8568@gmail.com">alikhalajj8568@gmail.com</a></p>
+        <p>LinkedIn: <a href="https://www.linkedin.com/in/ali-khalaj-3492b8267" target="_blank">View my LinkedIn</a></p>
+        <button class="close-button" onclick="closePopup()">×</button>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const overlay = document.getElementById("overlay");
+
+        function openPopup(popupId) {
+            document.getElementById(popupId).style.display = "block";
+            overlay.style.display = "block";
+        }
+
+        function closePopup() {
+            const popups = document.querySelectorAll('.popup');
+            popups.forEach(popup => popup.style.display = "none");
+            overlay.style.display = "none";
+        }
+
+        function openGameTab(gameId) {
+            // Hide all game content sections
+            const gameContents = document.querySelectorAll('.game-content');
+            gameContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Show the selected game content
+            const selectedGame = document.getElementById(gameId);
+            selectedGame.classList.add('active');
+        }
+
+        // Close the game popup when close button is clicked
+        function closeGameTab() {
+            const gameContents = document.querySelectorAll('.game-content');
+            gameContents.forEach(content => {
+                content.classList.remove('active'); // Hide the content
+            });
+        }
+        function openMafiaPopup() {
+            // Close any other active popups
+            const popups = document.querySelectorAll('.popup');
+            popups.forEach(popup => popup.style.display = "none");
+
+            // Open the Mafia popup
+            document.getElementById("mafiaPopup").style.display = "block";
+            overlay.style.display = "block"; // Show the overlay
+        }
+
+        // Close the Mafia Game popup
+        function closeMafiaPopup() {
+            document.getElementById("mafiaPopup").style.display = "none";
+            overlay.style.display = "none"; // Hide the overlay
+        }
+
+        function openOceanPopup() {
+            // Close any other active popups
+            const popups = document.querySelectorAll('.popup');
+            popups.forEach(popup => popup.style.display = "none");
+
+            // Open the Mafia popup
+            document.getElementById("oceanPopup").style.display = "block";
+            overlay.style.display = "block"; // Show the overlay
+        }
+
+        // Close the Mafia Game popup
+        function closeOceanPopup() {
+            document.getElementById("oceanPopup").style.display = "none";
+            overlay.style.display = "none"; // Hide the overlay
+        }
+
+        function openMazeJumper() {
+            // Close any other active popups
+            const popups = document.querySelectorAll('.popup');
+            popups.forEach(popup => popup.style.display = "none");
+
+            // Open the Mafia popup
+            document.getElementById("mazeJumperPopup").style.display = "block";
+            overlay.style.display = "block"; // Show the overlay
+        }
+
+        // Close the Mafia Game popup
+        function closeMazeJumper() {
+            document.getElementById("mazeJumperPopup").style.display = "none";
+            overlay.style.display = "none"; // Hide the overlay
+        }
+
+        
+        function openIdleVoxel() {
+            // Close any other active popups
+            const popups = document.querySelectorAll('.popup');
+            popups.forEach(popup => popup.style.display = "none");
+
+            // Open the Mafia popup
+            document.getElementById("openIdleVoxelPopup").style.display = "block";
+            overlay.style.display = "block"; // Show the overlay
+        }
+
+        // Close the Mafia Game popup
+        function closeIdleVoxel() {
+            document.getElementById("openIdleVoxelPopup").style.display = "none";
+            overlay.style.display = "none"; // Hide the overlay
+        }
+
+        function openHawaii() {
+            // Close any other active popups
+            const popups = document.querySelectorAll('.popup');
+            popups.forEach(popup => popup.style.display = "none");
+
+            // Open the Mafia popup
+            document.getElementById("hawaiiPopup").style.display = "block";
+            overlay.style.display = "block"; // Show the overlay
+        }
+
+        // Close the Mafia Game popup
+        function closeHawaii() {
+            document.getElementById("hawaiiPopup").style.display = "none";
+            overlay.style.display = "none"; // Hide the overlay
+        }
+
+        
+        function openServer() {
+            // Close any other active popups
+            const popups = document.querySelectorAll('.popup');
+            popups.forEach(popup => popup.style.display = "none");
+
+            // Open the Mafia popup
+            document.getElementById("serverPopup").style.display = "block";
+            overlay.style.display = "block"; // Show the overlay
+        }
+
+        // Close the Mafia Game popup
+        function closeServer() {
+            document.getElementById("serverPopup").style.display = "none";
+            overlay.style.display = "none"; // Hide the overlay
+        }
+    </script>
+</body>
+</html>
